@@ -2,11 +2,73 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
+        <link rel="stylesheet" href="./style.css">
         <title>Project: Rock Papaer Scissors</title>
-
     </head>
     <body>
+        <div class="container">
+            <h1>Paper Scissors Rock</h2>
+            <p>Please, click "Paper" "Scissors" or "Rock" to start the game!</p>
+            <p>Good Luck!</p>
+            <div class="btns">
+                <button id="paper" type="button">Paper</button>
+                <button id="scissors" type="button">Scissors</button>
+                <button id="rock" type="button">Rock</button>
+            </div>
+            <div class="output">
+
+            </div>
+            
+        </div>
         <script>
+            let buttonsDiv = document.querySelector(".btns");
+            let buttons = buttonsDiv.querySelectorAll("button");
+            let outputDiv = document.querySelector(".output");
+            let clicksLeft = 5;
+            let humanScore = 0;
+            let computerScore = 0;
+            buttonsDiv.addEventListener("click", (event) => {
+                let target = event.target;
+                if (clicksLeft > 0){
+                    switch(target.id) {
+                        case 'paper':
+                            playRound("Paper");
+                            break;
+                        case 'scissors':
+                            playRound("Scissors");
+                            break;
+                        case 'rock':
+                            playRound("Rock");
+                            break;
+                    };
+                    clicksLeft--;
+                } else if (clicksLeft === 0) {
+                    buttonsChoiceDisable(true);
+                    againGame();
+                }
+            });
+            outputDiv.addEventListener("click", (event) => {
+                if (event.target.id === "playAgain") {
+                    clicksLeft = 5;
+                    humanScore = 0;
+                    computerScore = 0;
+                    while(outputDiv.firstChild) {
+                        outputDiv.removeChild(outputDiv.firstChild);
+                    }
+                    buttonsChoiceDisable(false);
+                }
+            })
+            function buttonsChoiceDisable(argument){
+                if (argument === true){
+                    buttons.forEach(button => {
+                        button.disabled = true;
+                    });
+                } else {
+                    buttons.forEach(button => {
+                        button.disabled = false;
+                    })
+                }
+            }
             function getComputerChoice() {
                 const choice = Math.floor(Math.random() * 3) + 1;
                 if (choice === 1) {
@@ -17,48 +79,51 @@
                     return "Scissors"
                 }
             };
-            function getHumanChoice() {
-                const choice = parseInt(prompt("Please enter:\n1 - for Rock\n2 - for Paper\n3 - for Scissors"))
-                if (choice === 1) {
-                    return "Rock"
-                }else if (choice === 2) {
-                    return "Paper"
-                }else if (choice === 3) {
-                    return "Scissors"
-                }else {
-                    console.log("You did not select 1, 2 or 3!")
-                }
-            };
-            let humanScore = 0;
-            let computerScore = 0;
-            function playRound(humanChoise, computerChoise) {
+            function createNewParas(firstParaText, secondParaText){
+                let firstPara = document.createElement("p");
+                let secondPara = document.createElement("p");
+                firstPara.textContent = firstParaText;
+                secondPara.textContent = secondParaText;
+                outputDiv.appendChild(firstPara);
+                outputDiv.appendChild(secondPara);
+            }
+
+
+            function playRound(humanChoise) {
+                let computerChoise = getComputerChoice();
+                console.log(computerChoise);
+                let firstOutput = '';
+                let secondOutput = '';
                 if (humanChoise === computerChoise) {
-                    console.log("It is a tie\n");
-                    console.log("Human - " + humanScore + " | " + computerScore + " - Computer");
+                    firstOutput = "It is a tie";
+                    secondOutput = "Human - " + humanScore + " | " + computerScore + " - Computer";
+                    createNewParas(firstOutput, secondOutput);
                 }else if ((humanChoise === "Rock" && computerChoise === "Scissors") || (humanChoise === "Paper" && computerChoise === "Rock") || (humanChoise === "Scissors" && computerChoise === "Paper")) {
-                    console.log("Human WINS!\n");
+                    firstOutput = "Human WINS!";
                     humanScore += 1;
-                    console.log("Human - " + humanScore + " | " + computerScore + " - Computer");
+                    secondOutput = "Human - " + humanScore + " | " + computerScore + " - Computer";
+                    createNewParas(firstOutput, secondOutput);
                 }else if ((humanChoise === "Scissors" && computerChoise === "Rock") || (humanChoise === "Rock" && computerChoise === "Paper") || (humanChoise === "Paper" && computerChoise === "Scissors")) {
-                    console.log("Computer WINS!\n");
+                    firstOutput = "Computer WINS!";
                     computerScore += 1;
-                    console.log("Human - " + humanScore + " | " + computerScore + " - Computer");
+                    secondOutput = "Human - " + humanScore + " | " + computerScore + " - Computer";
+                    createNewParas(firstOutput, secondOutput);
                 }
             };
-            let n = 0;
-            function playGame(n) {
-                for (let i = 1; i<=n; i++) {
-                    const humanSelect = getHumanChoice();
-                    const computerSelect = getComputerChoice();
-                    playRound(humanSelect, computerSelect);
-                };
+            function againGame() {
+                let lastPara = document.createElement("p");
+                let playAgainButton = document.createElement("button");
                 if (humanScore > computerScore) {
-                    console.log("Bag of bones WINS!")
+                    lastText = "Bag of bones WINS!";
                 }else if (computerScore > humanScore) {
-                    console.log("Shiny metal ass WINS")
-                }else console.log("Friendship WINS")
+                    lastText = "Shiny metal ass WINS";
+                }else lastText = "Friendship WINS";
+                lastPara.textContent = lastText;
+                playAgainButton.textContent = "PLAY AGAIN!"
+                playAgainButton.setAttribute("id", "playAgain"),
+                outputDiv.appendChild(lastPara);
+                outputDiv.appendChild(playAgainButton);
             };
-            playGame(5);
         </script>
     </body>
 </html>
